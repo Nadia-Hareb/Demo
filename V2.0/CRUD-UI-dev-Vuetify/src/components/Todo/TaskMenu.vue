@@ -1,16 +1,8 @@
 <template>
   <div>
-    <v-menu
-      bottom
-      left
-    >
+    <v-menu bottom left>
       <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          color="primary"
-          icon
-          v-bind="attrs"
-          v-on="on"
-        >
+        <v-btn color="primary" icon v-bind="attrs" v-on="on">
           <v-icon>mdi-dots-vertical</v-icon>
         </v-btn>
       </template>
@@ -38,61 +30,61 @@
       v-if="dialogs.edit"
       @close="dialogs.edit = false"
       :ressource="task"
-    /> 
+    />
     <dialog-delete
       v-if="dialogs.delete"
       @close="dialogs.delete = false"
       :task="task"
     />
-
   </div>
 </template>
 
 <script>
 export default {
-  props: ['task'],
+  props: ["task"],
   data: () => ({
     dialogs: {
       edit: false,
-      delete: false
+      delete: false,
     },
     items: [
-      { 
-        title: 'Modifier',
-        icon: 'mdi-pencil',
+      {
+        title: "Modifier",
+        icon: "mdi-pencil",
         click() {
-          this.dialogs.edit = true
-        }
+          this.dialogs.edit = true;
+        },
       },
       {
-        title: 'Associer',
-        icon: 'mdi-google-maps',
+        title: "Associer",
+        icon: "mdi-google-maps",
         click() {
-          console.log('due date')
-        }
+          console.log("due date");
+        },
       },
       {
-        title: 'Supprimer',
-        icon: 'mdi-delete',
+        title: "Supprimer",
+        icon: "mdi-delete",
         click() {
-          this.dialogs.delete = true
-        }
-      }
+          this.dialogs.delete = true;
+        },
+      },
     ],
   }),
   methods: {
     handleClick(index) {
-      this.items[index].click.call(this)
-    }
+      this.items[index].click.call(this);
+    },
   },
   components: {
     // 'dialog-edit': require('@/components/Todo/Dialogs/DialogEdit.vue').default,
-    'dialog-delete': require('@/components/Todo/Dialogs/DialogDelete.vue').default,
-     'add-document': require('@/components/Todo/Dialogs/AddDocument.vue').default,
-  }
-}
+    "dialog-delete": require("@/components/Todo/Dialogs/DialogDelete.vue")
+      .default,
+    "add-document": require("@/components/Todo/Dialogs/AddDocument.vue")
+      .default,
+  },
+};
 </script>
 
 <style>
-
 </style>

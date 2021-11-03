@@ -28,17 +28,31 @@ namespace CRUD.API.Dev.Controllers
             return Ok(_ressource.GetRessources());
         }
 
+        //[HttpGet]
+        //[Route("api/[controller]/{id}")]
+        //public IActionResult GetRessource(Guid id)
+        //{
+        //    var ressource = _ressource.GetRessource(id);
+        //    if (ressource != null)
+        //    {
+        //        return Ok(ressource);
+        //    }
+        //    return NotFound($"Employe with Id {id} was not found");
+               
+        //}
+
         [HttpGet]
-        [Route("api/[controller]/{id}")]
-        public IActionResult GetRessource(Guid id)
+        [Route("api/[controller]/{number}")]
+        public IActionResult GetRessource(string number)
         {
-            var ressource = _ressource.GetRessource(id);
-            if (ressource != null)
+            var ressource = _ressource.GetRessource(number);
+            if (ressource != null&&ressource.Count>0)
             {
                 return Ok(ressource);
             }
-            return NotFound($"Employe with Id {id} was not found");
-               
+            else
+            return NotFound($"Ressource with Id {number} was not found");
+
         }
 
         [HttpPost]

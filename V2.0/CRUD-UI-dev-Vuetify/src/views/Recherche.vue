@@ -1,55 +1,78 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="$store.state.tasks"
-    item-key="name"
-    class="elevation-1 pa-6"
-  >
-    <template v-slot:top>
-      <!-- v-container, v-col and v-row are just for decoration purposes. -->
-      <v-container fluid class="pa-0">
-        <v-row>
-          <v-col cols="12" sm="6" md="4">
-            <v-text-field
-              label="Nom"
-              auto-grow
-              outlined
-              rows="1"
-              row-height="15"
-              clearable
-              v-model="nameFilterValue"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" sm="6" md="4">
-            <v-text-field
-              label="Numéro"
-              auto-grow
-              outlined
-              rows="1"
-              clearable
-              row-height="15"
-              v-model="numeroFilterValue"
-            ></v-text-field>
-          </v-col>
+  <div>
+    <v-data-table
+      :headers="headers"
+      :items="$store.state.tasks"
+      item-key="name"
+      class="elevation-1 pa-6"
+    >
+      <template v-slot:top>
+        <!-- v-container, v-col and v-row are just for decoration purposes. -->
+        <v-container fluid class="pa-0">
+          <v-row>
+            <v-col cols="12" sm="6" md="4">
+              <v-text-field
+                label="Nom"
+                auto-grow
+                outlined
+                rows="1"
+                row-height="15"
+                clearable
+                v-model="nameFilterValue"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" sm="6" md="4">
+              <v-text-field
+                label="Numéro"
+                auto-grow
+                outlined
+                rows="1"
+                clearable
+                row-height="15"
+                v-model="numeroFilterValue"
+              ></v-text-field>
+            </v-col>
 
-          <v-col cols="12" sm="6" md="4">
-            <v-select
-              auto-grow
-              outlined
-              :items="docTypeList"
-              v-model="docTypeFilterValue"
-              label="Type document"
-            ></v-select>
-          </v-col>
-        </v-row>
-      </v-container>
-    </template>
-   
-    <!-- <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-      <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
-    </template> -->
-  </v-data-table>
+            <v-col cols="12" sm="6" md="4">
+              <v-select
+                auto-grow
+                outlined
+                :items="docTypeList"
+                v-model="docTypeFilterValue"
+                label="Type document"
+              ></v-select>
+            </v-col>
+          </v-row>
+        </v-container>
+      </template>
+
+      <template v-slot:item.actions="{ item }">
+        <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
+        <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+      </template>
+      <add-document
+        v-if="dialog"
+        @close="dialog = false"
+        :ressource="editedItem"
+      />
+      <dialog-delete
+        v-if="dialogDelete"
+        @close="dialogDelete = false"
+        :task="editedItem"
+      />
+    </v-data-table>
+
+    <add-document
+      v-if="dialog"
+      @close="dialog = false"
+      :ressource="editedItem"
+    />
+    <dialog-delete
+      v-if="dialogDelete"
+      @close="dialogDelete = false"
+      :task="editedItem"
+    />
+  </div>
 </template>
 
 <script>
@@ -59,18 +82,8 @@ export default {
       dialog: false,
       dialogDelete: false,
       editedIndex: -1,
-      editedItem: {
-        name: "",
-        number: "",
-        effectiveDate: null,
-        doctype: null,
-      },
-      defaultItem: {
-        name: "",
-        number: "",
-        effectiveDate: null,
-        doctype: null,
-      },
+      editedItem: null,
+
       // We need some values for our select.
       docTypeList: [
         { text: "", value: null },
@@ -125,11 +138,17 @@ export default {
     },
   },
   methods: {
-    /**
-     * Filter for dessert names column.
-     * @param value Value to be tested.
-     * @returns {boolean}
-     */
+    editItem(item) {
+      this.editedItem = item;
+      this.dialog = true;
+    },
+
+    deleteItem(item) {
+      this.editedItem = item;
+      this.dialogDelete = true;
+      
+    },
+
     nameFilter(value) {
       // If this filter has no value we just skip the entire filter.
       if (!this.nameFilterValue) {
@@ -167,47 +186,33 @@ export default {
       return value === this.docTypeFilterValue;
     },
 
-     editItem (item) {
-        this.editedIndex = this.$store.state.tasks.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
+    deleteItemConfirm() {
+      this.closeDelete();
+    },
 
-      deleteItem (item) {
-        this.editedIndex = this.$store.state.tasks.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialogDelete = true
-      },
+    close() {
+      this.dialog = false;
+      this.editedItem = null;
+    },
 
-      deleteItemConfirm () {
-        this.$store.state.tasks.splice(this.editedIndex, 1)
-        this.closeDelete()
-      },
+    closeDelete() {
+      this.dialogDelete = false;
+      this.editedItem = null;
+    },
 
-      close () {
-        this.dialog = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-
-      closeDelete () {
-        this.dialogDelete = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.$store.state.tasks.push(this.editedItem)
-        }
-        this.close()
-      },
+    save() {
+      this.close();
+    },
+  },
+  components: {
+    // 'dialog-edit': require('@/components/Todo/Dialogs/DialogEdit.vue').default,
+    "dialog-delete": require("@/components/Todo/Dialogs/DialogDelete.vue")
+      .default,
+    "add-document": require("@/components/Todo/Dialogs/AddDocument.vue")
+      .default,
+  },
+  mounted() {
+    this.$store.dispatch("getRessources");   
   },
 };
 </script>

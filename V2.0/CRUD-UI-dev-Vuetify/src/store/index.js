@@ -9,15 +9,20 @@ const variables = {
 export default new Vuex.Store({
   state: {
     search: null,
+    searchGo:null,
     tasks: [],
+    tasksgo: [],
     snackbar: {
-      show: false,
-      text: ''
+    show: false,
+    text: ''
     }
   },
   mutations: {
     setSearch(state, value) {
       state.search = value
+    },
+    setSearchGo(state, value) {
+      state.searchGo = value
     },
     addTask(state, newTaskTitle) {
       let newTask = {
@@ -52,10 +57,17 @@ export default new Vuex.Store({
     hideSnackbar(state) {
       state.snackbar.show = false
     },
+    
+    SET_RESSOURCES_GO(state, param) {
+      state.tasksgo = param
+    
+    },
     SET_RESSOURCES(state, param) {
       state.tasks = param
     },
   },
+
+
   actions: {
     addTask({ commit }, newTaskTitle) {
       commit('addTask', newTaskTitle)
@@ -71,7 +83,7 @@ export default new Vuex.Store({
     },
 
     async updateRessourceTitle({ commit }, payload) {
-
+      try {
 
       axios.patch(variables.API_URL + "/" + payload.id, {
 
@@ -85,38 +97,73 @@ export default new Vuex.Store({
           axios.get(variables.API_URL)
           .then(response => {
             commit('SET_RESSOURCES', response.data);
+            commit('showSnackbar', 'Règlement a jour!')
           })
         });
        
-      commit('showSnackbar', 'Règlement a jour!')
+     }
+      catch (err) {
+        commit('showSnackbar', 'Update error'+' '+err)
+        
+      }
     },
 
 
     async getRessources({ commit }) {
+      try {
      await axios.get(variables.API_URL)
         .then(response => {
           commit('SET_RESSOURCES', response.data);
         })
+      }
+      catch (err) {
+        commit('showSnackbar', err)
+        
+      }
     },
+   
+
     async deleteRessource({ commit }, id) {
+      try {
       await axios.delete(variables.API_URL + "/" + id).then((response) => {
         axios.get(variables.API_URL)
           .then(response => {
             commit('SET_RESSOURCES', response.data);
           })
       });
-      commit('showSnackbar', 'Règlement supprimé')
+      commit('showSnackbar', 'Règlement supprimé')}
+      catch (err) {
+        commit('showSnackbar','Delete fail'+ ' '+err)
+        
+      }
     },
     async addRessource({ commit }, element) {
-      console.log(element);
+      try {
       await axios.post(variables.API_URL, element).then((response) => {
         axios.get(variables.API_URL)
           .then(response => {
             commit('SET_RESSOURCES', response.data);
           })
       });
-      commit('showSnackbar', 'Règlement ajouté !')
+      commit('showSnackbar', 'Règlement ajouté !')}
+      catch (err) {
+        commit('showSnackbar', 'Add fail'+' '+err)
+        
+      }
     },
+
+    async searchRessourceGo({ commit }, element) {
+      
+      try {
+      await axios.get(variables.API_URL+ "/" + element).then(response => {       
+        commit('SET_RESSOURCES_GO', response.data);
+      })}
+       catch (err) {
+        commit('showSnackbar', err)
+        
+      }
+    },
+
   },
   getters: {
     tasksFiltered(state) {
@@ -126,7 +173,15 @@ export default new Vuex.Store({
       return state.tasks.filter(task =>
         task.number.toLowerCase().includes(state.search.toLowerCase())
       )
-    }
+    },
+
+    tasksFilteredGo(state) {
+      
+        return state.tasksgo;
+      
+    },
+     
+
 
   }
 })

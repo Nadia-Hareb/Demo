@@ -8,7 +8,7 @@
     >
       mdi-check
     </v-icon>
-    <div class="text-h5 primary--text">No tasks</div>
+    <div class="text-h5 primary--text">Pas de reglement</div>
   </div>
 </template>
 

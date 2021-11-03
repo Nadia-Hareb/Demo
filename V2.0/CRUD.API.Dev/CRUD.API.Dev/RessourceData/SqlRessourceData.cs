@@ -59,6 +59,11 @@ namespace CRUD.API.Dev.RessourceData
            // return _context.Ressources.SingleOrDefault(item=>item.Id== Id);
         }
 
+        public List<Ressource> GetRessource(string number)
+        {
+            return _context.Ressources.Where(item => item.Number == number).ToList();
+        }
+
         public List<Ressource> GetRessources()
         {
            return  _context.Ressources.ToList();

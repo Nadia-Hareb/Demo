@@ -3,7 +3,7 @@
     <v-navigation-drawer v-model="drawer" app>
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title class="title"> LexSmart </v-list-item-title>
+          <v-list-item-title class="title"> LexSmart Admin </v-list-item-title>
           <v-list-item-subtitle> </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -23,7 +23,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar app color="primary" dark src="map-947471.jpg" prominent>
+    <v-app-bar app color="primary" dark src="map-947471.jpg" prominent >
       <template v-slot:img="{ props }">
         <v-img
           v-bind="props"
@@ -38,7 +38,6 @@
         </v-row>
       </v-container>
     </v-app-bar>
-
     <v-main>
       <router-view></router-view>
       <snackbar />

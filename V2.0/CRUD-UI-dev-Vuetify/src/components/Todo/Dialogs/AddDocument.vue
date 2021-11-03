@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :value="true" persistent>
+  <v-dialog :value="true" persistent max-width="500px">
     <v-card>
       <form class="elevation-1 pa-6">
         <v-text-field
